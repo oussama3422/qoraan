@@ -46,29 +46,30 @@ class _HomeScreenState extends State<HomeScreen> {
         centerTitle: true,
       ),
       body: ListView.builder(
-          itemCount: qoranModel.length,
-          itemBuilder: (context, index) {
-            print(qoranModel[index].audioUrl!);
-            print(qoranModel[index].chapterId);
-            print(qoranModel[index].fileSize);
-            print(qoranModel[index].id);
-            return Column(
-              children: [
-                AudioPlayerWidget(
-                  audioUrl: qoranModel[index].audioUrl!,
-                  nameOfSoratInFrance: surahList[index].name,
-                  nameOfSoratInArabic: surahList[index].arabicName,
-                  numberofAyat: surahList[index].verses,
-                  index: index,
-                  typeArabic: surahList[index].type,
-                ),
-                const Divider(
-                  color: Colors.grey,
-                  height: 1,
-                ),
-              ],
-            );
-          }),
+        itemCount: qoranModel.length,
+        itemBuilder: (context, index) {
+          print(qoranModel[index].audioUrl!);
+          print(qoranModel[index].chapterId);
+          print(qoranModel[index].fileSize);
+          print(qoranModel[index].id);
+          return Column(
+            children: [
+              AudioPlayerWidget(
+                audioUrl: qoranModel[index].audioUrl!,
+                nameOfSoratInFrance: surahList[index].name,
+                nameOfSoratInArabic: surahList[index].arabicName,
+                numberofAyat: surahList[index].verses,
+                index: index,
+                typeArabic: surahList[index].type,
+              ),
+              const Divider(
+                color: Colors.grey,
+                height: 1,
+              ),
+            ],
+          );
+        },
+      ),
     );
   }
 }

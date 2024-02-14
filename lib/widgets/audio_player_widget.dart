@@ -22,9 +22,18 @@ class AudioPlayerWidget extends StatefulWidget {
   _AudioPlayerWidgetState createState() => _AudioPlayerWidgetState();
 }
 
-class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
+class _AudioPlayerWidgetState extends State<AudioPlayerWidget>
+    with SingleTickerProviderStateMixin {
   static AudioPlayer audioPlayer = AudioPlayer();
   bool isPlaying = false;
+  AnimationController? _animationController;
+
+  @override
+  void dispose() {
+    _animationController!.dispose();
+    audioPlayer.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -36,6 +45,10 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
         });
       }
     });
+    _animationController = AnimationController(
+      vsync: this,
+      duration: Duration(seconds: 300),
+    );
   }
 
   @override
@@ -44,14 +57,12 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
       onTap: () {
         if (isPlaying) {
           audioPlayer.pause();
-          print(widget.audioUrl);
-          print("pause");
+          _animationController!.reverse();
         } else {
-          print(widget.audioUrl);
-          print("end");
           audioPlayer.play(
             UrlSource(widget.audioUrl),
           );
+          _animationController!.forward();
         }
       },
       child: Container(
@@ -72,37 +83,46 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
                   child: CircleAvatar(
                     backgroundColor:
                         const Color.fromARGB(255, 72, 93, 247).withOpacity(0.4),
-                    child: Text(
-                      '${widget.index}',
-                      style: const TextStyle(
-                        fontSize: 10,
-                        color: Colors.blue,
-                      ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          widget.numberofAyat.toString(),
+                          style: const TextStyle(
+                            fontSize: 10,
+                            color: Colors.blue,
+                          ),
+                        ),
+                        Text(
+                          widget.typeArabic,
+                          style: const TextStyle(
+                            fontSize: 10,
+                            color: Colors.blue,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
-                Column(
-                  children: [
-                    Text(
-                      widget.nameOfSoratInFrance,
-                      style: const TextStyle(
-                        fontSize: 17,
-                        color: Colors.blue,
-                      ),
+                Container(
+                  margin: EdgeInsets.only(left: 10),
+                  child: Text(
+                    widget.nameOfSoratInFrance,
+                    style: const TextStyle(
+                      fontSize: 17,
+                      color: Colors.blue,
                     ),
-                    Container(
-                      margin: const EdgeInsets.all(10),
-                      child: Text(
-                        ' ${widget.typeArabic} | عدد أياتها  ${widget.numberofAyat} ',
-                        style: const TextStyle(
-                          fontSize: 10,
-                          color: Colors.grey,
-                        ),
-                      ),
-                    )
-                  ],
+                  ),
                 ),
               ],
+            ),
+            AnimatedBuilder(
+              animation: _animationController!,
+              builder: (context, child) {
+                return isPlaying
+                    ? MusicVisualizer(isPlaying: isPlaying)
+                    : Container();
+              },
             ),
             Text(
               widget.nameOfSoratInArabic,
@@ -114,6 +134,99 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
           ],
         ),
       ),
+    );
+  }
+}
+
+class MusicVisualizer extends StatelessWidget {
+  final bool isPlaying;
+
+  List<Color> colors = [
+    Colors.blueAccent,
+    Colors.greenAccent,
+    Colors.redAccent,
+    Colors.yellowAccent,
+  ];
+
+  List<int> durations = [50, 50, 50, 50, 50];
+
+  MusicVisualizer({required this.isPlaying});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: List<Widget>.generate(
+        10,
+        (index) => VisualComponent(
+          color: colors[index % 4],
+          duration: durations[index % 5],
+          isPlaying: isPlaying,
+        ),
+      ),
+    );
+  }
+}
+
+class VisualComponent extends StatefulWidget {
+  final Color color;
+  final int duration;
+  final bool isPlaying;
+
+  const VisualComponent({
+    Key? key,
+    required this.color,
+    required this.duration,
+    required this.isPlaying,
+  }) : super(key: key);
+
+  @override
+  State<VisualComponent> createState() => _VisualComponentState();
+}
+
+class _VisualComponentState extends State<VisualComponent>
+    with SingleTickerProviderStateMixin {
+  Animation<double>? animation;
+  AnimationController? animationController;
+
+  @override
+  void initState() {
+    super.initState();
+    animationController = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: widget.duration),
+    );
+
+    if (widget.isPlaying) {
+      animationController!.repeat();
+    }
+
+    final curvedAnimation =
+        CurvedAnimation(parent: animationController!, curve: Curves.decelerate);
+    animation = Tween<double>(begin: 0, end: 100).animate(curvedAnimation)
+      ..addListener(() {
+        setState(() {});
+      });
+  }
+
+  @override
+  void didUpdateWidget(covariant VisualComponent oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.isPlaying) {
+      animationController!.repeat();
+    } else {
+      animationController!.stop();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 10,
+      decoration: BoxDecoration(
+        color: widget.color,
+        borderRadius: BorderRadius.circular(5),
+      ),
+      height: animation!.value,
     );
   }
 }
