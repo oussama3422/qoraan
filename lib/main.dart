@@ -1,3 +1,5 @@
+import 'package:audio_app/logic/cubit/playcubit.dart';
+import 'package:audio_app/logic/cubit/qoran_cubit.dart';
 import 'package:audio_app/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -19,9 +21,19 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: BlocProvider(
-        create: (context) => AudioPlayerQoranCubit(),
-        child: const HomeScreen(),
+      home: MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (context) => AudioPlayerQoranCubit(),
+          ),
+          BlocProvider(
+            create: (context) => PlayCubit(144),
+          ),
+          BlocProvider(
+            create: (context) => QuranCubit()..loadQuran(),
+          ),
+        ],
+        child: HomeScreen(),
       ),
     );
   }
