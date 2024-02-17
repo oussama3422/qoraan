@@ -12,13 +12,14 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Style.backgroundApp,
+      backgroundColor: AppColors.muted_teal,
       appBar: AppBar(
-        backgroundColor: Style.backgroundApp,
-        title: const Text(
+        backgroundColor: AppColors.light_beige,
+        title: Text(
           'القرأن الكريم',
           style: TextStyle(
-            color: Colors.white,
+            color: AppColors.terracotta_red,
+            fontFamily: AppColors.fontF2,
           ),
         ),
         centerTitle: true,

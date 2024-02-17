@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
             create: (context) => AudioPlayerQoranCubit(),
           ),
           BlocProvider(
-            create: (context) => PlayCubit(144),
+            create: (context) => AudioPlayerCubit(),
           ),
           BlocProvider(
             create: (context) => QuranCubit()..loadQuran(),
