@@ -22,79 +22,83 @@ class AudioPlayerWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AudioPlayerCubit, PlayerState>(
-      builder: (context, playerState) {
-        return InkWell(
-          onTap: () {
-             final audioPlayerCubit = context.read<AudioPlayerCubit>();
-            if (playerState == PlayerState.playing) {
-              audioPlayerCubit.pauseAudio();
-            } else {
-              audioPlayerCubit.playAudio(audioUrl);
-            }
-          },
-          child: ListTile(
-            // subtitle: Text('test',style: TextStyle(),),
-            selectedColor: AppColors.terracotta_red,
-            leading: Container(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: AppColors.light_beige,
-                  width: 2,
+    return BlocProvider(
+      create: (context) => AudioPlayerCubit(),
+      child: BlocBuilder<AudioPlayerCubit, PlayerState>(
+        builder: (context, playerState) {
+          return InkWell(
+            onTap: () {
+              final audioPlayerCubit = context.read<AudioPlayerCubit>();
+              if (playerState == PlayerState.playing) {
+                audioPlayerCubit.pauseAudio();
+              } else {
+                audioPlayerCubit.pauseAudio();
+                audioPlayerCubit.playAudio(audioUrl);
+              }
+            },
+            child: ListTile(
+              // subtitle: Text('test',style: TextStyle(),),
+              selectedColor: AppColors.terracotta_red,
+              leading: Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: AppColors.light_beige,
+                    width: 2,
+                  ),
+                ),
+                child: CircleAvatar(
+                  backgroundColor: AppColors.muted_teal,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        numberofAyat.toString(),
+                        style: TextStyle(
+                          fontSize: 10,
+                          color: AppColors.terracotta_red,
+                          fontFamily: AppColors.fontF2,
+                        ),
+                      ),
+                      Text(
+                        typeArabic,
+                        style: TextStyle(
+                          fontSize: 10,
+                          color: AppColors.terracotta_red,
+                          fontFamily: AppColors.fontF2,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-              child: CircleAvatar(
-                backgroundColor: AppColors.muted_teal,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      numberofAyat.toString(),
-                      style: TextStyle(
-                        fontSize: 10,
-                        color: AppColors.terracotta_red,
-                        fontFamily: AppColors.fontF2,
-                      ),
-                    ),
-                    Text(
-                      typeArabic,
-                      style: TextStyle(
-                        fontSize: 10,
-                        color: AppColors.terracotta_red,
-                        fontFamily: AppColors.fontF2,
-                      ),
-                    ),
-                  ],
+              title: Text(
+                nameOfSoratInArabic,
+                style: TextStyle(
+                  fontSize: 19,
+                  color: AppColors.terracotta_red,
+                  fontFamily: AppColors.fontF2,
+                ),
+              ),
+              trailing: CircleAvatar(
+                backgroundColor: AppColors.light_beige,
+                child: Container(
+                  alignment: Alignment.center,
+                  child: playerState == PlayerState.paused
+                      ? Icon(
+                          Icons.play_circle_filled,
+                          color: AppColors.terracotta_red,
+                        )
+                      : Icon(
+                          Icons.pause_circle_filled,
+                          color: AppColors.muted_teal,
+                        ),
                 ),
               ),
             ),
-            title: Text(
-              nameOfSoratInArabic,
-              style: TextStyle(
-                fontSize: 19,
-                color: AppColors.terracotta_red,
-                fontFamily: AppColors.fontF2,
-              ),
-            ),
-            trailing: CircleAvatar(
-              backgroundColor: AppColors.light_beige,
-              child: Container(
-                alignment: Alignment.center,
-                child: playerState == PlayerState.paused
-                    ? Icon(
-                        Icons.play_circle_filled,
-                        color: AppColors.terracotta_red,
-                      )
-                    : Icon(
-                        Icons.pause_circle_filled,
-                        color: AppColors.muted_teal,
-                      ),
-              ),
-            ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 }
